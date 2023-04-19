@@ -42,7 +42,8 @@ from prefect.exceptions import (
 from prefect.futures import PrefectFuture
 from prefect.logging import get_logger
 from prefect.results import ResultSerializer, ResultStorage
-from prefect.server.schemas.core import Flow, FlowRun, raise_on_invalid_name
+from prefect.server.schemas.core import Flow as FlowData
+from prefect.server.schemas.core import FlowRun, raise_on_invalid_name
 from prefect.states import State
 from prefect.task_runners import BaseTaskRunner, ConcurrentTaskRunner
 from prefect.utilities.annotations import NotSet
@@ -137,8 +138,10 @@ class Flow(Generic[P, R]):
         result_serializer: Optional[ResultSerializer] = None,
         cache_result_in_memory: bool = True,
         log_prints: Optional[bool] = None,
-        on_completion: Optional[List[Callable[[Flow, FlowRun, State], None]]] = None,
-        on_failure: Optional[List[Callable[[Flow, FlowRun, State], None]]] = None,
+        on_completion: Optional[
+            List[Callable[[FlowData, FlowRun, State], None]]
+        ] = None,
+        on_failure: Optional[List[Callable[[FlowData, FlowRun, State], None]]] = None,
     ):
         if not callable(fn):
             raise TypeError("'fn' must be callable")
@@ -237,8 +240,10 @@ class Flow(Generic[P, R]):
         result_serializer: Optional[ResultSerializer] = NotSet,
         cache_result_in_memory: bool = None,
         log_prints: Optional[bool] = NotSet,
-        on_completion: Optional[List[Callable[[Flow, FlowRun, State], None]]] = None,
-        on_failure: Optional[List[Callable[[Flow, FlowRun, State], None]]] = None,
+        on_completion: Optional[
+            List[Callable[[FlowData, FlowRun, State], None]]
+        ] = None,
+        on_failure: Optional[List[Callable[[FlowData, FlowRun, State], None]]] = None,
     ):
         """
         Create a new flow from the current object, updating provided options.
